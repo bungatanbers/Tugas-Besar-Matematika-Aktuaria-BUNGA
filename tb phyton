@@ -1,0 +1,897 @@
+import math
+import os 
+from colorama import init, Fore, Back, Style
+init(autoreset=True)
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def print_header():
+    width = 80
+    print(Fore.CYAN + "╔" + "═" * width + "╗")
+    print(Fore.CYAN + "║" + Fore.YELLOW + "KALKULATOR KEUANGAN & AKTUARIA".center(width) + Fore.CYAN + "║")
+    print(Fore.CYAN + "║" + Fore.WHITE + "Financial Calculator".center(width) + Fore.CYAN + "║")
+    print(Fore.CYAN + "╚" + "═" * width + "╝")
+    print()
+
+def print_line():
+    print(Fore.CYAN + "─" * 70)
+
+def print_success(msg):
+    print(Fore.GREEN + "✓ " + msg)
+
+def print_error(msg):
+    print(Fore.RED + "✗ " + msg)
+
+def print_info(msg):
+    print(Fore.BLUE + "ℹ " + msg)
+
+def print_result(label, value):
+    print(Fore.GREEN + f"📌 {label}: " + Fore.YELLOW + f"{value}")
+
+def pause():
+    input(Fore.LIGHTBLUE_EX + "\nTekan Enter untuk kembali ke menu..." + Style.RESET_ALL)
+
+# ============================================================
+# KELOMPOK 1 - BUNGA & NILAI WAKTU UANG
+# ============================================================
+def kelompok_bunga():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.LIGHTRED_EX + "📘 BUNGA & NILAI WAKTU UANG")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.WHITE + "   → Bunga sederhana, bunga majemuk, nilai akumulasi, mencari P,i,t")
+        print(Fore.WHITE + "   → Deposito, tabungan, pinjaman sederhana")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Bunga Sederhana")
+        print(" 2. Bunga Majemuk (tahunan)")
+        print(" 3. Bunga Majemuk (m-kali setahun)")
+        print(" 4. Mencari P / i / t (bunga sederhana)")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-4]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📘 BUNGA SEDERHANA")
+            print_line()
+            print_info("Rumus: I = P × i × t, A = P + I")
+            print_line()
+            P = float(input("Pokok (P): Rp "))
+            i = float(input("Tingkat bunga per tahun (%): ")) / 100
+            t = float(input("Waktu (tahun): "))
+            I = P * i * t
+            A = P + I
+            print_line()
+            print_result("Bunga (I)", f"Rp {I:,.0f}")
+            print_result("Nilai Akumulasi (A)", f"Rp {A:,.0f}")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📘 BUNGA MAJEMUK (TAHUNAN)")
+            print_line()
+            print_info("Rumus: A = P(1 + i)^n")
+            print_line()
+            P = float(input("Pokok (P): Rp "))
+            i = float(input("Tingkat bunga (% per tahun): ")) / 100
+            n = int(input("Jumlah tahun: "))
+            A = P * (1 + i) ** n
+            print_line()
+            print_result("Nilai Akumulasi", f"Rp {A:,.0f}")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📘 BUNGA MAJEMUK (m-KALI SETAHUN)")
+            print_line()
+            print_info("Rumus: A = P(1 + i(m)/m)^(m×t)")
+            print_line()
+            P = float(input("Pokok (P): Rp "))
+            i_nom = float(input("Tingkat bunga nominal (% per tahun): ")) / 100
+            print(Fore.CYAN + "Frekuensi konversi:")
+            print(" 1. Tahunan (m=1)")
+            print(" 2. Semesteran (m=2)")
+            print(" 3. Triwulanan (m=4)")
+            print(" 4. Bulanan (m=12)")
+            m_choice = input(Fore.YELLOW + "Pilih [1-4]: " + Style.RESET_ALL)
+            m_map = {"1": 1, "2": 2, "3": 4, "4": 12}
+            m = m_map.get(m_choice, 1)
+            t = float(input("Waktu (tahun): "))
+            A = P * (1 + i_nom / m) ** (m * t)
+            print_line()
+            print_result("Nilai Akumulasi", f"Rp {A:,.0f}")
+            pause()
+        elif pilih == "4":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📘 MENCARI P / i / t (BUNGA SEDERHANA)")
+            print_line()
+            print_info("Rumus: P = A/(1+i×t), i = (A-P)/(P×t), t = (A-P)/(P×i)")
+            print_line()
+            print(Fore.CYAN + "Cari:")
+            print(" 1. Pokok (P)")
+            print(" 2. Tingkat bunga (i)")
+            print(" 3. Waktu (t)")
+            sub = input(Fore.YELLOW + "Pilih [1-3]: " + Style.RESET_ALL)
+            if sub == "1":
+                A = float(input("Nilai Akumulasi (A): Rp "))
+                i = float(input("Tingkat bunga (%): ")) / 100
+                t = float(input("Waktu (tahun): "))
+                P = A / (1 + i * t)
+                print_line()
+                print_result("Pokok (P)", f"Rp {P:,.0f}")
+            elif sub == "2":
+                P = float(input("Pokok (P): Rp "))
+                A = float(input("Nilai Akumulasi (A): Rp "))
+                t = float(input("Waktu (tahun): "))
+                i = (A - P) / (P * t) * 100
+                print_line()
+                print_result("Tingkat bunga (i)", f"{i:.2f}% per tahun")
+            elif sub == "3":
+                P = float(input("Pokok (P): Rp "))
+                A = float(input("Nilai Akumulasi (A): Rp "))
+                i = float(input("Tingkat bunga (%): ")) / 100
+                t = (A - P) / (P * i)
+                print_line()
+                print_result("Waktu (t)", f"{t:.2f} tahun")
+            pause()
+
+# ============================================================
+# KELOMPOK 2 - NILAI SEKARANG & DISKONTO
+# ============================================================
+def kelompok_nilai_sekarang():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "📙 KELOMPOK 2 - NILAI SEKARANG & DISKONTO")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → PV dari FV, konversi i↔d, diskonto wesel/SBI")
+        print(Fore.BLUE + "   → Valuasi aset & instrumen diskonto")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Nilai Sekarang (PV) dari FV")
+        print(" 2. Konversi i ↔ d (tingkat diskonto efektif)")
+        print(" 3. Diskonto Wesel / SBI")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-3]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📙 NILAI SEKARANG (PV) dari FV")
+            print_line()
+            print_info("Rumus: PV = FV / (1 + i)^n")
+            print_line()
+            FV = float(input("Nilai masa depan (FV): Rp "))
+            i = float(input("Tingkat bunga (% per tahun): ")) / 100
+            n = int(input("Jumlah tahun: "))
+            PV = FV / (1 + i) ** n
+            print_line()
+            print_result("Nilai Sekarang (PV)", f"Rp {PV:,.0f}")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📙 KONVERSI i ↔ d")
+            print_line()
+            print_info("Rumus: d = i/(1+i), i = d/(1-d)")
+            print_line()
+            print(Fore.CYAN + "Pilih konversi:")
+            print(" 1. i → d (tingkat diskonto efektif)")
+            print(" 2. d → i (tingkat bunga efektif)")
+            sub = input(Fore.YELLOW + "Pilih [1-2]: " + Style.RESET_ALL)
+            if sub == "1":
+                i = float(input("Tingkat bunga i (%): ")) / 100
+                d = i / (1 + i) * 100
+                print_line()
+                print_result("Tingkat diskonto d", f"{d:.4f}%")
+            elif sub == "2":
+                d = float(input("Tingkat diskonto d (%): ")) / 100
+                i = d / (1 - d) * 100
+                print_line()
+                print_result("Tingkat bunga i", f"{i:.4f}%")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📙 DISKONTO WESEL / SBI")
+            print_line()
+            print_info("Rumus: Harga = Nominal × (1 - d × t)")
+            print_info("Yield = (Nominal - Harga)/(Harga × t) × 100%")
+            print_line()
+            nominal = float(input("Nilai nominal wesel: Rp "))
+            d = float(input("Tingkat diskonto (% per tahun): ")) / 100
+            t_hari = float(input("Jatuh tempo (hari): "))
+            t = t_hari / 360
+            harga = nominal * (1 - d * t)
+            yield_rate = (nominal - harga) / (harga * t) * 100
+            print_line()
+            print_result("Harga wesel", f"Rp {harga:,.0f}")
+            print_result("Tingkat bunga efektif (yield)", f"{yield_rate:.2f}%")
+            pause()
+
+# ============================================================
+# KELOMPOK 3 - BUNGA NOMINAL & KONTINYU
+# ============================================================
+def kelompok_bunga_nominal():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "📗 KELOMPOK 3 - BUNGA NOMINAL & KONTINYU")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → Konversi i(m)→i efektif, d(m)→i, kekuatan bunga (δ)")
+        print(Fore.BLUE + "   → Analisis bunga frekuensi tinggi & continuous compounding")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Konversi i(m) → i efektif")
+        print(" 2. Konversi d(m) → i efektif")
+        print(" 3. Kekuatan bunga (δ) & kontinyu")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-3]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📗 KONVERSI i(m) → i EFEKTIF")
+            print_line()
+            print_info("Rumus: i_eff = (1 + i(m)/m)^m - 1")
+            print_line()
+            i_nom = float(input("Tingkat bunga nominal i(m) (%): ")) / 100
+            print(Fore.CYAN + "Frekuensi konversi (m):")
+            print(" 1. Tahunan (m=1)  2. Semesteran (m=2)")
+            print(" 3. Triwulanan (m=4)  4. Bulanan (m=12)")
+            m_choice = input(Fore.YELLOW + "Pilih [1-4]: " + Style.RESET_ALL)
+            m_map = {"1": 1, "2": 2, "3": 4, "4": 12}
+            m = m_map.get(m_choice, 1)
+            i_eff = ((1 + i_nom / m) ** m - 1) * 100
+            print_line()
+            print_result("Tingkat bunga efektif", f"{i_eff:.4f}% per tahun")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📗 KONVERSI d(m) → i EFEKTIF")
+            print_line()
+            print_info("Rumus: i_eff = (1 - d(m)/m)^(-m) - 1")
+            print_line()
+            d_nom = float(input("Tingkat diskonto nominal d(m) (%): ")) / 100
+            print(Fore.CYAN + "Frekuensi konversi (m):")
+            print(" 1. Tahunan (m=1)  2. Semesteran (m=2)")
+            print(" 3. Triwulanan (m=4)  4. Bulanan (m=12)")
+            m_choice = input(Fore.YELLOW + "Pilih [1-4]: " + Style.RESET_ALL)
+            m_map = {"1": 1, "2": 2, "3": 4, "4": 12}
+            m = m_map.get(m_choice, 1)
+            i_eff = ((1 - d_nom / m) ** (-m) - 1) * 100
+            print_line()
+            print_result("Tingkat bunga efektif", f"{i_eff:.4f}% per tahun")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📗 KEKUATAN BUNGA (δ) & KONTINYU")
+            print_line()
+            print_info("Rumus: δ = ln(1+i), A = P·e^(δt)")
+            print_line()
+            print(Fore.CYAN + "Pilih:")
+            print(" 1. i → δ (kekuatan bunga)")
+            print(" 2. δ → i (bunga efektif)")
+            print(" 3. Nilai akumulasi kontinyu")
+            sub = input(Fore.YELLOW + "Pilih [1-3]: " + Style.RESET_ALL)
+            if sub == "1":
+                i = float(input("Tingkat bunga i (%): ")) / 100
+                delta = math.log(1 + i) * 100
+                print_line()
+                print_result("Kekuatan bunga δ", f"{delta:.4f}%")
+            elif sub == "2":
+                delta = float(input("Kekuatan bunga δ (%): ")) / 100
+                i = (math.exp(delta) - 1) * 100
+                print_line()
+                print_result("Tingkat bunga i", f"{i:.4f}%")
+            elif sub == "3":
+                P = float(input("Pokok (P): Rp "))
+                delta = float(input("Kekuatan bunga δ (%): ")) / 100
+                t = float(input("Waktu (tahun): "))
+                A = P * math.exp(delta * t)
+                print_line()
+                print_result("Nilai akumulasi", f"Rp {A:,.0f}")
+            pause()
+
+# ============================================================
+# KELOMPOK 4 - PERSAMAAN NILAI & NPV
+# ============================================================
+def kelompok_persamaan_nilai():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "📕 KELOMPOK 4 - PERSAMAAN NILAI & NPV")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → NPV, IRR, pembayaran tunggal pengganti utang")
+        print(Fore.BLUE + "   → Analisis kelayakan proyek & investasi")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. NPV (Net Present Value)")
+        print(" 2. IRR (Internal Rate of Return)")
+        print(" 3. Pembayaran tunggal pengganti utang")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-3]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📕 NPV (NET PRESENT VALUE)")
+            print_line()
+            print_info("Rumus: NPV = Σ CFt / (1+i)^t")
+            print_line()
+            cf0 = float(input("Investasi awal (negatif): Rp "))
+            n = int(input("Jumlah periode arus kas: "))
+            cf = []
+            for i in range(1, n + 1):
+                cf.append(float(input(f"Arus kas tahun ke-{i}: Rp ")))
+            i = float(input("Tingkat diskonto (%): ")) / 100
+            npv = cf0
+            for t, cash in enumerate(cf, start=1):
+                npv += cash / (1 + i) ** t
+            print_line()
+            print_result("NPV", f"Rp {npv:,.0f}")
+            if npv > 0:
+                print_success("Proyek LAYAK (NPV positif)")
+            elif npv < 0:
+                print_error("Proyek TIDAK LAYAK (NPV negatif)")
+            else:
+                print_info("Proyek impas (NPV = 0)")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📕 IRR (INTERNAL RATE OF RETURN)")
+            print_line()
+            print_info("Metode: Trial & error (estimasi)")
+            print_line()
+            cf0 = float(input("Investasi awal (negatif): Rp "))
+            n = int(input("Jumlah periode: "))
+            cf = []
+            for i in range(1, n + 1):
+                cf.append(float(input(f"Arus kas tahun ke-{i}: Rp ")))
+            
+            def npv(rate):
+                result = cf0
+                for t, cash in enumerate(cf, start=1):
+                    result += cash / (1 + rate) ** t
+                return result
+            
+            guess = 0.1
+            for _ in range(30):
+                if npv(guess) > 0:
+                    guess += 0.01
+                else:
+                    guess -= 0.001
+            print_line()
+            print_result("Estimasi IRR", f"{guess * 100:.2f}%")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📕 PEMBAYARAN TUNGGAL PENGGANTI UTANG")
+            print_line()
+            print_info("Prinsip: Nilai utang = Nilai pembayaran baru pada tanggal fokus")
+            print_line()
+            n = int(input("Jumlah utang: "))
+            utang = []
+            tahun = []
+            for i in range(n):
+                print(Fore.CYAN + f"Utang ke-{i+1}:")
+                u = float(input("  Nilai utang: Rp "))
+                t = float(input("  Jatuh tempo (tahun): "))
+                utang.append(u)
+                tahun.append(t)
+            i = float(input("Tingkat bunga (%): ")) / 100
+            t_fokus = float(input("Tanggal fokus (tahun): "))
+            
+            total = 0
+            for u, t in zip(utang, tahun):
+                total += u * (1 + i) ** (t_fokus - t)
+            print_line()
+            print_result(f"Pembayaran tunggal pada tahun ke-{t_fokus}", f"Rp {total:,.0f}")
+            pause()
+
+# ============================================================
+# KELOMPOK 5 - ANUITAS
+# ============================================================
+def kelompok_anuitas():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "📔 KELOMPOK 5 - ANUITAS")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → Anuitas immediate & due, mencari R/n, amortisasi, perpetuitas")
+        print(Fore.BLUE + "   → KPR, kredit, dana pensiun")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Anuitas Immediate")
+        print(" 2. Anuitas Due")
+        print(" 3. Mencari pembayaran (R) atau periode (n)")
+        print(" 4. Tabel Amortisasi Pinjaman")
+        print(" 5. Perpetuitas (biasa & ditunda)")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-5]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📔 ANUITAS IMMEDIATE")
+            print_line()
+            print_info("Pembayaran di AKHIR periode")
+            print_info("Rumus PV = R × (1 - (1+i)^-n)/i")
+            print_info("Rumus FV = R × ((1+i)^n - 1)/i")
+            print_line()
+            print(Fore.CYAN + "1. Nilai Sekarang (PV)")
+            print("2. Nilai Akumulasi (FV)")
+            sub = input(Fore.YELLOW + "Pilih [1-2]: " + Style.RESET_ALL)
+            R = float(input("Pembayaran periodik (R): Rp "))
+            i = float(input("Tingkat bunga per periode (%): ")) / 100
+            n = int(input("Jumlah periode: "))
+            if sub == "1":
+                PV = R * (1 - (1 + i) ** -n) / i
+                print_line()
+                print_result("Nilai Sekarang", f"Rp {PV:,.0f}")
+            else:
+                FV = R * ((1 + i) ** n - 1) / i
+                print_line()
+                print_result("Nilai Akumulasi", f"Rp {FV:,.0f}")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📔 ANUITAS DUE")
+            print_line()
+            print_info("Pembayaran di AWAL periode")
+            print_info("Rumus PV = R × (1 - (1+i)^-n)/d, dengan d = i/(1+i)")
+            print_line()
+            print(Fore.CYAN + "1. Nilai Sekarang (PV)")
+            print("2. Nilai Akumulasi (FV)")
+            sub = input(Fore.YELLOW + "Pilih [1-2]: " + Style.RESET_ALL)
+            R = float(input("Pembayaran periodik (R): Rp "))
+            i = float(input("Tingkat bunga per periode (%): ")) / 100
+            n = int(input("Jumlah periode: "))
+            d = i / (1 + i)
+            if sub == "1":
+                PV = R * (1 - (1 + i) ** -n) / d
+                print_line()
+                print_result("Nilai Sekarang", f"Rp {PV:,.0f}")
+            else:
+                FV = R * ((1 + i) ** n - 1) / d
+                print_line()
+                print_result("Nilai Akumulasi", f"Rp {FV:,.0f}")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📔 MENCARI R ATAU n")
+            print_line()
+            print(Fore.CYAN + "1. Mencari R dari PV")
+            print("2. Mencari n dari PV")
+            sub = input(Fore.YELLOW + "Pilih [1-2]: " + Style.RESET_ALL)
+            i = float(input("Tingkat bunga per periode (%): ")) / 100
+            if sub == "1":
+                PV = float(input("Nilai Sekarang (PV): Rp "))
+                n = int(input("Jumlah periode: "))
+                R = PV * i / (1 - (1 + i) ** -n)
+                print_line()
+                print_result("Pembayaran periodik (R)", f"Rp {R:,.0f}")
+            elif sub == "2":
+                PV = float(input("Nilai Sekarang (PV): Rp "))
+                R = float(input("Pembayaran periodik (R): Rp "))
+                a_n = PV / R
+                n = -math.log(1 - a_n * i) / math.log(1 + i)
+                print_line()
+                print_result("Jumlah periode (n)", f"{n:.2f}")
+            pause()
+        elif pilih == "4":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📔 TABEL AMORTISASI PINJAMAN")
+            print_line()
+            P = float(input("Pokok pinjaman: Rp "))
+            i = float(input("Tingkat bunga per periode (%): ")) / 100
+            n = int(input("Jumlah periode: "))
+            R = P * i / (1 - (1 + i) ** -n)
+            print_line()
+            print(Fore.GREEN + f"Angsuran per periode = Rp {R:,.0f}")
+            print_line()
+            print(Fore.CYAN + f"{'Periode':^8} | {'Pembayaran':^12} | {'Bunga':^10} | {'Pokok':^10} | {'Sisa Utang':^12}")
+            print(Fore.CYAN + "-" * 65)
+            sisa = P
+            for t in range(1, n + 1):
+                bunga = sisa * i
+                pokok = R - bunga
+                sisa -= pokok
+                print(f"{t:^8} | {R:12,.0f} | {bunga:10,.0f} | {pokok:10,.0f} | {sisa:12,.0f}")
+            pause()
+        elif pilih == "5":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📔 PERPETUITAS")
+            print_line()
+            print_info("Anuitas tak hingga")
+            print(Fore.CYAN + "1. Perpetuitas biasa")
+            print("2. Perpetuitas ditunda")
+            print("3. Perpetuitas dengan pertumbuhan")
+            sub = input(Fore.YELLOW + "Pilih [1-3]: " + Style.RESET_ALL)
+            R = float(input("Pembayaran periodik: Rp "))
+            i = float(input("Tingkat bunga (%): ")) / 100
+            if sub == "1":
+                PV = R / i
+                print_line()
+                print_result("Nilai Sekarang", f"Rp {PV:,.0f}")
+            elif sub == "2":
+                t_tunda = int(input("Penundaan (periode): "))
+                PV = (R / i) / (1 + i) ** t_tunda
+                print_line()
+                print_result(f"Nilai Sekarang (ditunda {t_tunda} periode)", f"Rp {PV:,.0f}")
+            elif sub == "3":
+                g = float(input("Tingkat pertumbuhan (%): ")) / 100
+                if i <= g:
+                    print_error("Error: i harus > g")
+                else:
+                    PV = R / (i - g)
+                    print_line()
+                    print_result("Nilai Sekarang (growing perpetuity)", f"Rp {PV:,.0f}")
+            pause()
+
+# ============================================================
+# KELOMPOK 6 - ANUITAS KHUSUS
+# ============================================================
+def kelompok_anuitas_khusus():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "📒 KELOMPOK 6 - ANUITAS KHUSUS")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → Growing annuity, continuous annuity")
+        print(Fore.BLUE + "   → Valuasi dengan inflasi atau arus kas meningkat")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Anuitas dengan pertumbuhan (growing)")
+        print(" 2. Anuitas kontinyu")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-2]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📒 ANUITAS DENGAN PERTUMBUHAN")
+            print_line()
+            print_info("Rumus: PV = R1 × (1 - ((1+g)/(1+i))^n) / (i - g)")
+            print_line()
+            R1 = float(input("Pembayaran pertama: Rp "))
+            i = float(input("Tingkat bunga per periode (%): ")) / 100
+            g = float(input("Tingkat pertumbuhan (%): ")) / 100
+            n = int(input("Jumlah periode: "))
+            if i == g:
+                PV = R1 * n / (1 + i)
+            else:
+                PV = R1 * (1 - ((1 + g) / (1 + i)) ** n) / (i - g)
+            print_line()
+            print_result("Nilai Sekarang", f"Rp {PV:,.0f}")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📒 ANUITAS KONTINYU")
+            print_line()
+            print_info("Rumus: PV = R × (1 - e^(-δn)) / δ, dengan δ = ln(1+i)")
+            print_line()
+            R = float(input("Total pembayaran per tahun: Rp "))
+            i = float(input("Tingkat bunga (%): ")) / 100
+            n = int(input("Jumlah tahun: "))
+            delta = math.log(1 + i)
+            PV = R * (1 - math.exp(-delta * n)) / delta
+            print_line()
+            print_result("Nilai Sekarang", f"Rp {PV:,.0f}")
+            pause()
+
+# ============================================================
+# KELOMPOK 7 - PROBABILITAS AKTUARIA
+# ============================================================
+def kelompok_probabilitas():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "📊 KELOMPOK 7 - PROBABILITAS AKTUARIA")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → Survival S(x), force of mortality, tpx/tqx, harapan hidup")
+        print(Fore.BLUE + "   → Dasar aktuaria & asuransi")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Survival & Force of Mortality")
+        print(" 2. Probabilitas hidup/mati (tpx, tqx)")
+        print(" 3. Harapan hidup (ex)")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-3]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📊 SURVIVAL & FORCE OF MORTALITY")
+            print_line()
+            print_info("Model: S(x) = e^(-0.01x) (constant force)")
+            print_line()
+            x = float(input("Masukkan usia x: "))
+            S = math.exp(-0.01 * x)
+            mu = 0.01
+            print_line()
+            print_result(f"S({x})", f"{S:.4f}")
+            print_result(f"μ({x})", f"{mu:.4f}")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📊 PROBABILITAS HIDUP/MATI")
+            print_line()
+            print_info("Asumsi: lx = 100000 - 1000×x")
+            print_info("Rumus: tpx = l(x+t)/l(x), tqx = 1 - tpx")
+            print_line()
+            x = int(input("Usia sekarang: "))
+            t = int(input("Jangka waktu t tahun: "))
+            lx = max(0, 100000 - 1000 * x)
+            lx_t = max(0, 100000 - 1000 * (x + t))
+            tpx = lx_t / lx if lx > 0 else 0
+            tqx = 1 - tpx
+            print_line()
+            print_result(f"{t}p{x} (hidup {t} tahun)", f"{tpx:.4f}")
+            print_result(f"{t}q{x} (mati dalam {t} tahun)", f"{tqx:.4f}")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "📊 HARAPAN HIDUP")
+            print_line()
+            print_info("Asumsi: lx = 100000 - 1000×x, maks usia 100")
+            print_info("Rumus: ex ≈ (usia_maks - x)/2")
+            print_line()
+            x = int(input("Usia sekarang: "))
+            ex = (100 - x) / 2
+            print_line()
+            print_result(f"Harapan hidup e{x}", f"{ex:.2f} tahun")
+            pause()
+
+# ============================================================
+# KELOMPOK 8 - ASURANSI JIWA
+# ============================================================
+def kelompok_asuransi():
+    while True:
+        clear_screen()
+        print_header()
+        print(Fore.MAGENTA + "🛡️ KELOMPOK 8 - ASURANSI JIWA")
+        print_line()
+        print(Fore.WHITE + "DESKRIPSI:")
+        print(Fore.BLUE + "   → Premi berjangka, seumur hidup, dwiguna, kontinyu, premi tahunan")
+        print(Fore.BLUE + "   → Perhitungan premi asuransi jiwa")
+        print_line()
+        print(Fore.CYAN + "SUB MENU:")
+        print(" 1. Premi asuransi berjangka (diskrit)")
+        print(" 2. Premi asuransi seumur hidup")
+        print(" 3. Premi asuransi dwiguna (endowment)")
+        print(" 4. Premi asuransi kontinyu")
+        print(" 5. Premi tahunan dari premi tunggal")
+        print(Fore.RED + " 0. Kembali ke menu utama")
+        print_line()
+        pilih = input(Fore.YELLOW + "Pilih sub-menu [0-5]: " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            break
+        elif pilih == "1":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "🛡️ PREMI ASURANSI BERJANGKA")
+            print_line()
+            print_info("Asumsi: qx = 0.01, bunga = 6%")
+            print_info("Rumus: A = Σ v^(k+1) × k|qx")
+            print_line()
+            x = int(input("Usia tertanggung: "))
+            n = int(input("Jangka waktu (tahun): "))
+            manfaat = float(input("Manfaat asuransi: Rp "))
+            i = 0.06
+            q = 0.01
+            v = 1 / (1 + i)
+            A = 0
+            for k in range(n):
+                A += v ** (k + 1) * q * (1 - q) ** k
+            premi = manfaat * A
+            print_line()
+            print_result("Premi bersih tunggal", f"Rp {premi:,.0f}")
+            pause()
+        elif pilih == "2":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "🛡️ PREMI ASURANSI SEUMUR HIDUP")
+            print_line()
+            print_info("Asumsi: qx = 0.01, bunga = 6%")
+            print_info("Rumus: A = Σ_(k=0)^∞ v^(k+1) × k|qx")
+            print_line()
+            x = int(input("Usia tertanggung: "))
+            manfaat = float(input("Manfaat asuransi: Rp "))
+            i = 0.06
+            q = 0.01
+            v = 1 / (1 + i)
+            A = 0
+            for k in range(100 - x):
+                A += v ** (k + 1) * q * (1 - q) ** k
+            premi = manfaat * A
+            print_line()
+            print_result("Premi bersih tunggal", f"Rp {premi:,.0f}")
+            pause()
+        elif pilih == "3":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "🛡️ PREMI ASURANSI DWIGUNA")
+            print_line()
+            print_info("Asumsi: qx = 0.01, bunga = 6%")
+            print_info("Rumus: A = A_berjangka + v^n × npx")
+            print_line()
+            x = int(input("Usia tertanggung: "))
+            n = int(input("Jangka waktu (tahun): "))
+            manfaat = float(input("Manfaat asuransi: Rp "))
+            i = 0.06
+            q = 0.01
+            v = 1 / (1 + i)
+            A_term = 0
+            for k in range(n):
+                A_term += v ** (k + 1) * q * (1 - q) ** k
+            npx = (1 - q) ** n
+            A_endow = v ** n * npx
+            A_total = A_term + A_endow
+            premi = manfaat * A_total
+            print_line()
+            print_result("Premi bersih tunggal", f"Rp {premi:,.0f}")
+            pause()
+        elif pilih == "4":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "🛡️ PREMI ASURANSI KONTINYU")
+            print_line()
+            print_info("Asumsi: μ = 0.01, δ = ln(1.06)")
+            print_info("Rumus: Ā = μ/(μ+δ) × (1 - e^(-(μ+δ)n))")
+            print_line()
+            manfaat = float(input("Manfaat asuransi: Rp "))
+            n = int(input("Jangka waktu (0 = seumur hidup): "))
+            delta = math.log(1.06)
+            mu = 0.01
+            if n == 0:
+                A_bar = mu / (mu + delta)
+            else:
+                A_bar = mu / (mu + delta) * (1 - math.exp(-(mu + delta) * n))
+            premi = manfaat * A_bar
+            print_line()
+            print_result("Premi bersih tunggal", f"Rp {premi:,.0f}")
+            pause()
+        elif pilih == "5":
+            clear_screen()
+            print_header()
+            print(Fore.MAGENTA + "🛡️ PREMI TAHUNAN")
+            print_line()
+            print_info("Rumus: P = A / ä, dengan ä = anuitas hidup due")
+            print_info("Asumsi: ä = 10 (contoh sederhana)")
+            print_line()
+            A = float(input("Premi bersih tunggal: Rp "))
+            a_double_dot = 10
+            P = A / a_double_dot
+            print_line()
+            print_result("Premi tahunan", f"Rp {P:,.0f}")
+            pause()
+
+# ============================================================
+# MENU UTAMA (8 KELOMPOK DENGAN WARNA & GARIS)
+# ============================================================
+def main():
+    width = 75
+    while True:
+        clear_screen()
+        print_header()
+    
+        print(Fore.CYAN + "╔════╗" + "═" * width + "╗")
+        print(Fore.CYAN + "║ " + Fore.WHITE + "No" + Fore.CYAN + " ║" + Fore.YELLOW + "Menu dan Deskripsi".center(width) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 1. " + Fore.CYAN + "║ " + Fore.YELLOW + "📘 BUNGA & NILAI WAKTU UANG".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung bunga sederhana, bunga majemuk, nilai akumulasi".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Tabungan bank, deposito, pinjaman sederhana".ljust(width-13) + Fore.CYAN + "            ║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 2. " + Fore.CYAN + "║ " + Fore.YELLOW + "📙 NILAI SEKARANG & DISKONTO".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung nilai uang masa depan jika dinilai sekarang.".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Valuasi aset & instrumen diskonto".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 3. " + Fore.CYAN + "║ " + Fore.YELLOW + "📗 BUNGA NOMINAL & KONTINYU".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung bunga yang dihitung harian, bulanan, atau terus-menerus".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Analisis bunga frekuensi tinggi & continuous compounding".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 4. " + Fore.CYAN + "║ " + Fore.YELLOW + "📕 PERSAMAAN NILAI & NPV".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → NPV, IRR, pembayaran tunggal pengganti utang".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Analisis kelayakan proyek & investasi".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 5. " + Fore.CYAN + "║ " + Fore.YELLOW + "📔 ANUITAS".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung cicilan bulanan/tahunan yang sama besar".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → KPR, kredit, dana pensiun".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 6. " + Fore.CYAN + "║ " + Fore.YELLOW + "📒 ANUITAS KHUSUS".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung cicilan yang naik tiap tahun (inflasi) atau terus-menerus".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Valuasi dengan inflasi atau arus kas meningkat".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 7. " + Fore.CYAN + "║ " + Fore.YELLOW + "📊 PROBABILITAS AKTUARIA".ljust(width-2) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung peluang hidup/mati seseorang dan harapan hidup".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Perusahaan asuransi jiwa, dana pensiun, perencanaan keuangan pribadi".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╠════╬" + Fore.CYAN + "═" * width + "╣")
+        print(Fore.CYAN + "║" + Fore.WHITE + " 8. " + Fore.CYAN + "║ " + Fore.YELLOW + "🛡️ ASURANSI JIWA".ljust(width) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Menghitung premi (iuran) asuransi jiwa yang harus dibayar".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "║    ║ " + Fore.WHITE + "   → Perhitungan premi asuransi jiwa".ljust(width-1) + Fore.CYAN + "║")
+        print(Fore.CYAN + "╚════╩" + "═" * width + "╝")
+        
+        print(Fore.YELLOW + "╔" + "═" * (width+5) + "╗")
+        print(Fore.YELLOW+ "║  " + Fore.WHITE + " Pilih Menu [1-8]".ljust(width+2) + Fore.YELLOW + " ║")
+        print(Fore.YELLOW + "╚" + "═" * (width+5) + "╝")
+        
+        print(Fore.RED + "╔" + "═" * (width+5) + "╗")
+        print(Fore.RED + "║  " + Fore.WHITE + " 0. Keluar aplikasi".ljust(width+2) + Fore.RED + " ║")
+        print(Fore.RED + "╚" + "═" * (width+5) + "╝")
+
+        pilih = input(Fore.GREEN + "\n➤ " + Style.RESET_ALL)
+        
+        if pilih == "0":
+            clear_screen()
+            print_header()
+            print_success("Terima kasih telah menggunakan kalkulator ini!")
+            print_info("Dibuat untuk membantu perhitungan dalam matematika aktuaria")
+            print()
+            break
+        elif pilih == "1":
+            kelompok_bunga()
+        elif pilih == "2":
+            kelompok_nilai_sekarang()
+        elif pilih == "3":
+            kelompok_bunga_nominal()
+        elif pilih == "4":
+            kelompok_persamaan_nilai()
+        elif pilih == "5":
+            kelompok_anuitas()
+        elif pilih == "6":
+            kelompok_anuitas_khusus()
+        elif pilih == "7":
+            kelompok_probabilitas()
+        elif pilih == "8":
+            kelompok_asuransi()
+        else:
+            print_error("Pilihan tidak valid!")
+            pause()
+
+if __name__ == "__main__":
+    main()
